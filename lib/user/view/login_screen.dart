@@ -8,7 +8,6 @@ import 'package:acture/common/layout/default_layout.dart';
 import 'package:acture/common/view/root_tab.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -23,7 +22,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final storage = new FlutterSecureStorage();
     final dio = Dio();
     // localhost
     const emulatorUp = '10.0.2.2:3000';
@@ -64,7 +62,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   const SizedBox(height: 16.0),
                   ElevatedButton(
                       onPressed: () async {
-                        const rawString = 'test@codefactory.ai:testtest';
+                        final rawString = '$username:$password';
 
                         Codec<String, String> stringToBase64 =
                             utf8.fuse(base64);
@@ -78,8 +76,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
                         await storage.write(
                             key: REFRESH_TONKE_KEY, value: refrreshToken);
-                        await storage.write(key: ACCESS_TOKEN, value: accessToken);
-
+                        await storage.write(
+                            key: ACCESS_TOKEN, value: accessToken);
                         Navigator.of(context).push(
                             MaterialPageRoute(builder: (_) => const RootTab()));
                       },
