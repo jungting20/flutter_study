@@ -3,6 +3,7 @@ import 'package:acture/common/const/data.dart';
 import 'package:acture/common/layout/default_layout.dart';
 import 'package:acture/common/view/root_tab.dart';
 import 'package:acture/user/view/login_screen.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -28,13 +29,17 @@ class _SplashScreenState extends State<SplashScreen> {
     final refreshToken = await storage.read(key: REFRESH_TONKE_KEY);
     final acceessToken = await storage.read(key: ACCESS_TOKEN);
 
-    if (refreshToken == null || acceessToken == null) {
+    final dio = Dio();
+
+    try {
+      final resp = await dio.post('http://$ip/auth/token',
+          options: Options(headers: {'authorization': 'Bearer $refreshToken'}));
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (_) => const RootTab()), (route) => false);
+    } catch (e) {
       Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(builder: (_) => const LoginScreen()),
           (route) => false);
-    } else {
-      Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (_) => const RootTab()), (route) => false);
     }
   }
 
