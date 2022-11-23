@@ -5,21 +5,24 @@ class RestaurantCard extends StatelessWidget {
   final Widget image;
   final String name;
   final List<String> tags;
-  final int ratingCount;
-  final int deleveryTime;
-  final int deleveryFee;
-  final double rating;
+  final int ratingsCount;
+  final int deliveryTime;
+  final int deliveryFee;
+  final double ratings;
 
   const RestaurantCard({
     Key? key,
     required this.image,
     required this.name,
     required this.tags,
-    required this.ratingCount,
-    required this.deleveryTime,
-    required this.deleveryFee,
-    required this.rating,
+    required this.ratingsCount,
+    required this.deliveryTime,
+    required this.deliveryFee,
+    required this.ratings,
   }) : super(key: key);
+
+
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -39,10 +42,10 @@ class RestaurantCard extends StatelessWidget {
               style: TextStyle(color: BODY_TEXT_COLOR, fontSize: 14.0),
             ),
             Row(children: [
-              _IconText(icon: Icons.star, label: rating.toString()),
-              _IconText(icon: Icons.receipt, label: ratingCount.toString()),
-              _IconText(icon: Icons.timelapse_outlined, label: '$deleveryTime 분'),
-              _IconText(icon: Icons.monetization_on, label:deleveryFee == 0 ? '무료': deleveryFee.toString()),
+              _IconText(icon: Icons.star, label: ratings.toString()),
+              _IconText(icon: Icons.receipt, label: ratingsCount.toString()),
+              _IconText(icon: Icons.timelapse_outlined, label: '$deliveryTime 분'),
+              _IconText(icon: Icons.monetization_on, label:deliveryFee == 0 ? '무료': deliveryFee.toString()),
             ])
           ],
         )

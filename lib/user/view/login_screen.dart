@@ -71,11 +71,11 @@ class _LoginScreenState extends State<LoginScreen> {
                         final resp = await dio.post('http://$ip/auth/login',
                             options: Options(
                                 headers: {'authorization': 'Basic $token'}));
-                        final refrreshToken = resp.data['refrreshToken'];
+                        final refreshToken = resp.data['refreshToken'];
                         final accessToken = resp.data['accessToken'];
 
                         await storage.write(
-                            key: REFRESH_TONKE_KEY, value: refrreshToken);
+                            key: REFRESH_TOKEN_KEY, value: refreshToken);
                         await storage.write(
                             key: ACCESS_TOKEN, value: accessToken);
                         Navigator.of(context).push(
