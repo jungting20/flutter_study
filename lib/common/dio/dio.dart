@@ -1,6 +1,16 @@
 import 'package:acture/common/const/data.dart';
+import 'package:acture/common/secure_storage/secure_storage.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
+//Provider은 안에 값 바뀌면 또 새로 생성하니까 ref로 secureStorageProvider 감시함
+final dioProvider = Provider<Dio>((ref) {
+  final dio = Dio();
+  final storage = ref.watch(secureStorageProvider);
+  dio.interceptors.add(CustomInterceptor(storage: storage));
+  return dio;
+});
 
 class CustomInterceptor extends Interceptor {
   final FlutterSecureStorage storage;
@@ -12,6 +22,8 @@ class CustomInterceptor extends Interceptor {
   @override
   void onRequest(
       RequestOptions options, RequestInterceptorHandler handler) async {
+    print('[REQ] [${options.method}] ${options.uri}');
+
     if (options.headers['accessToken'] == 'true') {
       options.headers.remove('accessToken');
       final token = await storage.read(key: ACCESS_TOKEN);
@@ -25,10 +37,10 @@ class CustomInterceptor extends Interceptor {
   }
 
   @override
-    void onResponse(Response response, ResponseInterceptorHandler handler) {
-      // TODO: implement onResponse
-      return super.onResponse(response, handler);
-    }
+  void onResponse(Response response, ResponseInterceptorHandler handler) {
+    // TODO: implement onResponse
+    return super.onResponse(response, handler);
+  }
 
   @override
   void onError(DioError err, ErrorInterceptorHandler handler) async {
@@ -48,24 +60,19 @@ class CustomInterceptor extends Interceptor {
       final dio = Dio();
 
       try {
-        //리프레시 토큰 재발급은 이전 리플레시 토큰으로 재밝브 발을 수 있다 
+        //리프레시 토큰 재발급은 이전 리플레시 토큰으로 재밝브 발을 수 있다
         final resp = await dio.post('http://$ip/auth/token',
             options:
                 Options(headers: {'authorization': 'Bearer $refreshToken'}));
         final accessToken = resp.data['accessToken'];
-        
+
         final options = err.requestOptions;
 
-        options.headers.addAll({
-          'authorization': 'Bearer $accessToken'
-        });
-
+        options.headers.addAll({'authorization': 'Bearer $accessToken'});
 
         await storage.write(key: ACCESS_TOKEN, value: accessToken);
         final response = await dio.fetch(options);
         return handler.resolve(response);
-
-
       } on DioError catch (e) {
         return handler.reject(err);
       }

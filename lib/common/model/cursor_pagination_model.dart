@@ -15,6 +15,7 @@ class CursorPagination<T> {
     required this.data,
   });
 
+
   factory CursorPagination.fromJson(Map<String, dynamic> json, T Function(Object? json) fromJsonT) =>
       _$CursorPaginationFromJson(json,fromJsonT);
 }

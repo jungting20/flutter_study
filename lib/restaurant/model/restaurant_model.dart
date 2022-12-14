@@ -20,6 +20,8 @@ class RestaurantModel {
   final int deliveryTime;
   final int deliveryFee;
 
+    
+  
   RestaurantModel({
     required this.id,
     required this.name,
@@ -31,6 +33,7 @@ class RestaurantModel {
     required this.deliveryTime,
     required this.deliveryFee,
   });
+
 
 
   factory RestaurantModel.fromJson(Map<String, dynamic> json)

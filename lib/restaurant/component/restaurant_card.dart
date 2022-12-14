@@ -3,6 +3,8 @@ import 'package:acture/restaurant/model/restaurant_detail_model.dart';
 import 'package:acture/restaurant/model/restaurant_model.dart';
 import 'package:flutter/material.dart';
 
+
+
 class RestaurantCard extends StatelessWidget {
   final Widget image;
   final String name;
