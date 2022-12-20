@@ -1,6 +1,7 @@
 import 'package:acture/common/const/data.dart';
 import 'package:acture/common/dio/dio.dart';
 import 'package:acture/common/model/cursor_pagination_model.dart';
+import 'package:acture/common/model/pagination_params.dart';
 import 'package:acture/restaurant/model/restaurant_detail_model.dart';
 import 'package:acture/restaurant/model/restaurant_model.dart';
 import 'package:dio/dio.dart' hide Headers;
@@ -23,7 +24,9 @@ abstract class RestaurantRepository {
 
   @GET('/')
   @Headers({'accessToken': 'true'})
-  Future<CursorPagination<RestaurantModel>> paginate();
+  Future<CursorPagination<RestaurantModel>> paginate({
+    @Queries() PaginationParams? paginationParams = const PaginationParams(),
+  });
 
   @GET('/{id}')
   @Headers({'accessToken': 'true'})

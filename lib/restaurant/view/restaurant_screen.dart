@@ -12,32 +12,24 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 class RestaurantScreen extends ConsumerWidget {
   const RestaurantScreen({Key? key}) : super(key: key);
 
-  Future<List<RestaurantModel>> paginnateRestaurant(WidgetRef ref) async {
-    final dio = ref.watch(dioProvider);
-
-    final resp =
-        await RestaurantRepository(dio, baseUrl: 'http://$ip/restaurant')
-            .paginate();
-
-    return resp.data;
-  }
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final data = ref.watch(restaurantProvider);
 
-    if (data.length == 0) {
+    if (data is CursorPaginationLoading) {
       return Center(child: CircularProgressIndicator());
     }
+
+    final cp = data as CursorPagination;
 
     return Container(
       child: Center(
           child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: ListView.separated(
-                itemCount: data.length,
+                itemCount: cp.data.length,
                 itemBuilder: (_, index) {
-                  final pItem = data[index];
+                  final pItem = cp.data[index];
                   return GestureDetector(
                       onTap: () {
                         Navigator.of(context).push(MaterialPageRoute(
