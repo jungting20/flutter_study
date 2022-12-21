@@ -10,6 +10,8 @@ class CursorPaginationError extends CursorPaginationBase {
   CursorPaginationError({required this.message});
 }
 
+//첫 로딩
+// no data
 class CursorPaginationLoading extends CursorPaginationBase {}
 
 @JsonSerializable(

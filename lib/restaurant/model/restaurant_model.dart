@@ -11,7 +11,9 @@ enum RestaurantPriceRange { expensive, medium, cheap }
 class RestaurantModel {
   final String id;
   final String name;
-  @JsonKey(fromJson: DataUtils.pathToUrl,)
+  @JsonKey(
+    fromJson: DataUtils.pathToUrl,
+  )
   final String thumbUrl;
   final List<String> tags;
   final RestaurantPriceRange priceRange;
@@ -20,8 +22,6 @@ class RestaurantModel {
   final int deliveryTime;
   final int deliveryFee;
 
-    
-  
   RestaurantModel({
     required this.id,
     required this.name,
@@ -34,15 +34,10 @@ class RestaurantModel {
     required this.deliveryFee,
   });
 
+  factory RestaurantModel.fromJson(Map<String, dynamic> json) =>
+      _$RestaurantModelFromJson(json);
 
-
-  factory RestaurantModel.fromJson(Map<String, dynamic> json)
-      => _$RestaurantModelFromJson(json);
-
-
-  Map<String,dynamic> toJson() => _$RestaurantModelToJson(this);
-
-
+  Map<String, dynamic> toJson() => _$RestaurantModelToJson(this);
 
   /* factory RestaurantModel.fromJson({
     required Map<String, dynamic> json
@@ -59,6 +54,3 @@ class RestaurantModel {
           deliveryFee: json['deliveryFee']);
   } */
 }
-
-
-

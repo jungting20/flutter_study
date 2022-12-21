@@ -7,6 +7,7 @@ import 'package:acture/restaurant/model/restaurant_model.dart';
 import 'package:dio/dio.dart' hide Headers;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:retrofit/retrofit.dart';
+
 part 'restaurant_repository.g.dart';
 
 final restaurantRepositoryProvider = Provider((ref) {
