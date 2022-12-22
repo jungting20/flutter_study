@@ -1,5 +1,4 @@
 import 'package:acture/common/view/splash_screen.dart';
-import 'package:acture/user/view/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
