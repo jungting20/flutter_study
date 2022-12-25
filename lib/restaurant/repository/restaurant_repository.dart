@@ -23,6 +23,7 @@ abstract class RestaurantRepository {
   factory RestaurantRepository(Dio dio, {String baseUrl}) =
       _RestaurantRepository;
 
+  //retrofit이 만들어 줬나...
   @GET('/')
   @Headers({'accessToken': 'true'})
   Future<CursorPagination<RestaurantModel>> paginate({
