@@ -11,6 +11,7 @@ final restaurantDetailProvider =
   if (state is! CursorPagination) {
     return null;
   }
+  //기존 리스트에서 데이터 가져옴
   return state.data.firstWhere((element) => element.id == id);
 });
 
@@ -122,6 +123,14 @@ class RestaurantStateNotifier extends StateNotifier<CursorPaginationBase> {
       await this.paginate();
     }
 
+    //5가지 가능성
+    //1_ CursorPagination - 정상적으로 데이터가 있는 상태
+    //2_ CursorPaginationLoading - 데이터가 로딩중인 상태 ( 현재 캐시 없음)
+    //3_ CursorPaginationError - 에러가 있는 상태
+    //4_ CursorPaginationRefetching - 첫번째 페이지부터 다시 데이터를 가져 올떄
+    //5_ CursorPaginationFetchMore - 추가 데이터를 paginate g애롸는 요청을 받았을떄
+    //paginate를 가져온 후에도 계속 CursorPagination이 아니면 무언가 에러가 난거임
+    // 즉 CursorPagination 상태가 데이터가 있는 상태임
     //state CUrsorPagination이 아닐떄
     if (state is! CursorPagination) {
       return;

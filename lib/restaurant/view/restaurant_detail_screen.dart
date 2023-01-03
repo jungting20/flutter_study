@@ -20,12 +20,6 @@ class RestaurantDetailScreen extends ConsumerStatefulWidget {
 
 class _RestaurantDetailScreenState
     extends ConsumerState<RestaurantDetailScreen> {
-  Future<RestaurantDetailModel> getRestaurantDetail(WidgetRef ref) async {
-    return ref
-        .watch(restaurantRepositoryProvider)
-        .getRestaurantDetail(id: widget.id);
-  }
-
   @override
   void initState() {
     // TODO: implement initState
