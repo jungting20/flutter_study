@@ -3,7 +3,6 @@ import 'package:acture/restaurant/model/restaurant_model.dart';
 import 'package:json_annotation/json_annotation.dart';
 part 'restaurant_detail_model.g.dart';
 
-
 @JsonSerializable()
 class RestaurantDetailModel extends RestaurantModel {
   final String detail;

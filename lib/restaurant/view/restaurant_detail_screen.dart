@@ -4,14 +4,15 @@ import 'package:acture/restaurant/component/restaurant_card.dart';
 import 'package:acture/restaurant/model/restaurant_detail_model.dart';
 import 'package:acture/restaurant/model/restaurant_model.dart';
 import 'package:acture/restaurant/provider/restaurant_provider.dart';
-import 'package:acture/restaurant/repository/restaurant_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:skeletons/skeletons.dart';
 
 class RestaurantDetailScreen extends ConsumerStatefulWidget {
   final String id;
 
-  const RestaurantDetailScreen({required this.id, Key? key}) : super(key: key);
+  const RestaurantDetailScreen({required this.id, Key? key})
+      : super(key: key);
 
   @override
   ConsumerState<RestaurantDetailScreen> createState() =>
@@ -33,13 +34,15 @@ class _RestaurantDetailScreenState
     final state = ref.watch(restaurantDetailProvider(widget.id));
 
     if (state == null) {
-      return DefaultLayout(child: Center(child: CircularProgressIndicator()));
+      return const DefaultLayout(
+          child: Center(child: CircularProgressIndicator()));
     }
 
     return DefaultLayout(
         title: '불타는 떡볶이',
         child: CustomScrollView(slivers: [
-          renderTop(model: state!),
+          renderTop(model: state),
+          if (state is! RestaurantDetailModel) renderLoading(),
           if (state is RestaurantDetailModel) renderLabel(),
           if (state is RestaurantDetailModel)
             renderProducts(products: state.products),
@@ -47,7 +50,7 @@ class _RestaurantDetailScreenState
   }
 
   SliverToBoxAdapter renderLabel() {
-    return SliverToBoxAdapter(
+    return const SliverToBoxAdapter(
       child: Text(
         'Menu',
         style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w500),
@@ -55,13 +58,28 @@ class _RestaurantDetailScreenState
     );
   }
 
-  SliverPadding renderProducts(
-      {required List<RestaurantProductModel> products}) {
+  SliverPadding renderLoading() {
     return SliverPadding(
       padding: EdgeInsets.symmetric(horizontal: 16.0),
       sliver: SliverList(
-        delegate: SliverChildBuilderDelegate(childCount: products.length,
-            (context, index) {
+          delegate: SliverChildListDelegate(List.generate(
+              3,
+              (index) => Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: SkeletonParagraph(
+                        style: SkeletonParagraphStyle(
+                            lines: 5, padding: EdgeInsets.zero)),
+                  )))),
+    );
+  }
+
+  SliverPadding renderProducts(
+      {required List<RestaurantProductModel> products}) {
+    return SliverPadding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      sliver: SliverList(
+        delegate: SliverChildBuilderDelegate(
+            childCount: products.length, (context, index) {
           final model = products[index];
 
           return Padding(
@@ -76,6 +94,7 @@ class _RestaurantDetailScreenState
   SliverToBoxAdapter renderTop({
     required RestaurantModel model,
   }) {
-    return SliverToBoxAdapter(child: RestaurantCard.fromModel(model: model));
+    return SliverToBoxAdapter(
+        child: RestaurantCard.fromModel(model: model));
   }
 }
