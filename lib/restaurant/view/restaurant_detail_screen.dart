@@ -29,6 +29,7 @@ class _RestaurantDetailScreenState
   ) {
     final state = ref.watch(restaurantDetailProvider(widget.id));
     final ratingState = ref.watch(restaurantRatingProvider(widget.id));
+    print(ratingState);
 
     if (state == null) {
       return const DefaultLayout(
@@ -36,7 +37,7 @@ class _RestaurantDetailScreenState
     }
 
     return DefaultLayout(
-        title: '불타는 떡볶이',
+        title: '불타는',
         child: CustomScrollView(slivers: [
           renderTop(model: state),
           if (state is! RestaurantDetailModel) renderLoading(),

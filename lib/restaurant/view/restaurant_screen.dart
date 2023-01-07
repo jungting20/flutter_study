@@ -9,8 +9,7 @@ class RestaurantScreen extends ConsumerStatefulWidget {
   const RestaurantScreen({Key? key}) : super(key: key);
 
   @override
-  ConsumerState<RestaurantScreen> createState() =>
-      _RestaurantScreenState();
+  ConsumerState<RestaurantScreen> createState() => _RestaurantScreenState();
 }
 
 class _RestaurantScreenState extends ConsumerState<RestaurantScreen> {
@@ -24,8 +23,7 @@ class _RestaurantScreenState extends ConsumerState<RestaurantScreen> {
   }
 
   void scrollListener() {
-    if (controller.offset >
-        controller.position.maxScrollExtent - 300) {
+    if (controller.offset > controller.position.maxScrollExtent - 300) {
       ref.read(restaurantProvider.notifier).paginate(fetchMore: true);
     }
   }
