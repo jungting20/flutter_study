@@ -1,9 +1,12 @@
 import 'package:acture/common/layout/default_layout.dart';
 import 'package:acture/product/component/product_card.dart';
+import 'package:acture/rating/component/rating_card.dart';
 import 'package:acture/restaurant/component/restaurant_card.dart';
 import 'package:acture/restaurant/model/restaurant_detail_model.dart';
 import 'package:acture/restaurant/model/restaurant_model.dart';
 import 'package:acture/restaurant/provider/restaurant_provider.dart';
+import 'package:acture/restaurant/provider/restaurant_rating_provider.dart';
+import 'package:acture/restaurant/repository/restaurant_rating_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:skeletons/skeletons.dart';
@@ -11,8 +14,7 @@ import 'package:skeletons/skeletons.dart';
 class RestaurantDetailScreen extends ConsumerStatefulWidget {
   final String id;
 
-  const RestaurantDetailScreen({required this.id, Key? key})
-      : super(key: key);
+  const RestaurantDetailScreen({required this.id, Key? key}) : super(key: key);
 
   @override
   ConsumerState<RestaurantDetailScreen> createState() =>
@@ -22,16 +24,11 @@ class RestaurantDetailScreen extends ConsumerStatefulWidget {
 class _RestaurantDetailScreenState
     extends ConsumerState<RestaurantDetailScreen> {
   @override
-  void initState() {
-    // TODO: implement initState
-    ref.read(restaurantProvider.notifier).getDetail(id: widget.id);
-  }
-
-  @override
   Widget build(
     BuildContext context,
   ) {
     final state = ref.watch(restaurantDetailProvider(widget.id));
+    final ratingState = ref.watch(restaurantRatingProvider(widget.id));
 
     if (state == null) {
       return const DefaultLayout(
@@ -46,7 +43,25 @@ class _RestaurantDetailScreenState
           if (state is RestaurantDetailModel) renderLabel(),
           if (state is RestaurantDetailModel)
             renderProducts(products: state.products),
+          const SliverPadding(
+            padding: EdgeInsets.symmetric(horizontal: 16.0),
+            sliver: SliverToBoxAdapter(
+              child: RatingCard(
+                avatarImage: AssetImage('asset/img/logo/logo.png'),
+                content: '맛있습니다',
+                email: 'jc@codefactory.ai',
+                images: [],
+                rating: 4,
+              ),
+            ),
+          )
         ]));
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    ref.read(restaurantProvider.notifier).getDetail(id: widget.id);
   }
 
   SliverToBoxAdapter renderLabel() {
@@ -60,14 +75,14 @@ class _RestaurantDetailScreenState
 
   SliverPadding renderLoading() {
     return SliverPadding(
-      padding: EdgeInsets.symmetric(horizontal: 16.0),
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
       sliver: SliverList(
           delegate: SliverChildListDelegate(List.generate(
               3,
               (index) => Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: SkeletonParagraph(
-                        style: SkeletonParagraphStyle(
+                        style: const SkeletonParagraphStyle(
                             lines: 5, padding: EdgeInsets.zero)),
                   )))),
     );
@@ -78,8 +93,8 @@ class _RestaurantDetailScreenState
     return SliverPadding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       sliver: SliverList(
-        delegate: SliverChildBuilderDelegate(
-            childCount: products.length, (context, index) {
+        delegate: SliverChildBuilderDelegate(childCount: products.length,
+            (context, index) {
           final model = products[index];
 
           return Padding(
@@ -94,7 +109,6 @@ class _RestaurantDetailScreenState
   SliverToBoxAdapter renderTop({
     required RestaurantModel model,
   }) {
-    return SliverToBoxAdapter(
-        child: RestaurantCard.fromModel(model: model));
+    return SliverToBoxAdapter(child: RestaurantCard.fromModel(model: model));
   }
 }

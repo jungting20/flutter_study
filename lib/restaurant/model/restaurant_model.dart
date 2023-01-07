@@ -1,4 +1,5 @@
 import 'package:acture/common/const/data.dart';
+import 'package:acture/common/model/model_with_id.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 import '../../common/utils/data_utils.dart';
@@ -8,7 +9,8 @@ part 'restaurant_model.g.dart';
 enum RestaurantPriceRange { expensive, medium, cheap }
 
 @JsonSerializable()
-class RestaurantModel {
+class RestaurantModel implements IModelWithId {
+  @override
   final String id;
   final String name;
   @JsonKey(
