@@ -29,7 +29,6 @@ class _RestaurantDetailScreenState
   ) {
     final state = ref.watch(restaurantDetailProvider(widget.id));
     final ratingState = ref.watch(restaurantRatingProvider(widget.id));
-    print(ratingState);
 
     if (state == null) {
       return const DefaultLayout(
