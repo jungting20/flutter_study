@@ -1,12 +1,14 @@
 import 'package:acture/common/layout/default_layout.dart';
+import 'package:acture/common/model/cursor_pagination_model.dart';
+import 'package:acture/common/utils/pagination_utils.dart';
 import 'package:acture/product/component/product_card.dart';
 import 'package:acture/rating/component/rating_card.dart';
+import 'package:acture/rating/model/rating_model.dart';
 import 'package:acture/restaurant/component/restaurant_card.dart';
 import 'package:acture/restaurant/model/restaurant_detail_model.dart';
 import 'package:acture/restaurant/model/restaurant_model.dart';
 import 'package:acture/restaurant/provider/restaurant_provider.dart';
 import 'package:acture/restaurant/provider/restaurant_rating_provider.dart';
-import 'package:acture/restaurant/repository/restaurant_rating_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:skeletons/skeletons.dart';
@@ -23,12 +25,14 @@ class RestaurantDetailScreen extends ConsumerStatefulWidget {
 
 class _RestaurantDetailScreenState
     extends ConsumerState<RestaurantDetailScreen> {
+  final ScrollController controller = ScrollController();
+
   @override
   Widget build(
     BuildContext context,
   ) {
     final state = ref.watch(restaurantDetailProvider(widget.id));
-    final ratingState = ref.watch(restaurantRatingProvider(widget.id));
+    final ratingsState = ref.watch(restaurantRatingProvider(widget.id));
 
     if (state == null) {
       return const DefaultLayout(
@@ -36,32 +40,37 @@ class _RestaurantDetailScreenState
     }
 
     return DefaultLayout(
-        title: '불타는',
-        child: CustomScrollView(slivers: [
+      title: '불타는',
+      child: CustomScrollView(
+        controller: controller,
+        slivers: [
           renderTop(model: state),
           if (state is! RestaurantDetailModel) renderLoading(),
           if (state is RestaurantDetailModel) renderLabel(),
           if (state is RestaurantDetailModel)
             renderProducts(products: state.products),
-          const SliverPadding(
-            padding: EdgeInsets.symmetric(horizontal: 16.0),
-            sliver: SliverToBoxAdapter(
-              child: RatingCard(
-                avatarImage: AssetImage('asset/img/logo/logo.png'),
-                content: '맛있습니다',
-                email: 'jc@codefactory.ai',
-                images: [],
-                rating: 4,
-              ),
-            ),
-          )
-        ]));
+          if (ratingsState is CursorPagination<RatingModel>)
+            renderRatings(models: ratingsState.data)
+        ],
+      ),
+    );
   }
 
   @override
   void initState() {
     // TODO: implement initState
     ref.read(restaurantProvider.notifier).getDetail(id: widget.id);
+
+    controller.addListener(listener);
+  }
+
+  void listener() {
+    PaginationUtils.paginate(
+      controller: controller,
+      provider: ref.read(
+        restaurantRatingProvider(widget.id).notifier,
+      ),
+    );
   }
 
   SliverToBoxAdapter renderLabel() {
@@ -71,6 +80,18 @@ class _RestaurantDetailScreenState
         style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w500),
       ),
     );
+  }
+
+  SliverPadding renderRatings({
+    required List<RatingModel> models,
+  }) {
+    return SliverPadding(
+        padding: EdgeInsets.symmetric(horizontal: 16.0),
+        sliver: SliverList(
+          delegate: SliverChildBuilderDelegate(
+              (_, index) => RatingCard.fromModel(model: models[index]),
+              childCount: models.length),
+        ));
   }
 
   SliverPadding renderLoading() {

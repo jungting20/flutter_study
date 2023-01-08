@@ -1,4 +1,5 @@
 import 'package:acture/common/const/colors.dart';
+import 'package:acture/rating/model/rating_model.dart';
 import 'package:flutter/material.dart';
 import 'package:collection/collection.dart';
 
@@ -17,6 +18,18 @@ class RatingCard extends StatelessWidget {
       required this.content,
       Key? key})
       : super(key: key);
+
+  factory RatingCard.fromModel({
+    required RatingModel model,
+  }) {
+    return RatingCard(
+        images: model.imgUrls.map((e) => Image.network(e)).toList(),
+        rating: model.rating,
+        avatarImage: NetworkImage(model.user.imageUrl),
+        email: model.user.username,
+        content: model.content);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -58,17 +71,13 @@ class _Header extends StatelessWidget {
           email,
           overflow: TextOverflow.ellipsis,
           style: const TextStyle(
-              fontSize: 14.0,
-              color: Colors.black,
-              fontWeight: FontWeight.w500),
+              fontSize: 14.0, color: Colors.black, fontWeight: FontWeight.w500),
         ),
       ),
       ...List.generate(
           5,
           (index) => Icon(
-              index < rating
-                  ? Icons.star
-                  : Icons.star_border_outlined,
+              index < rating ? Icons.star : Icons.star_border_outlined,
               color: PRIMART_COLOR))
     ]);
   }
@@ -86,8 +95,7 @@ class _Body extends StatelessWidget {
         //이거해야 다음주로 넘어감
         Flexible(
           child: Text(content,
-              style: const TextStyle(
-                  color: BODY_TEXT_COLOR, fontSize: 14.0)),
+              style: const TextStyle(color: BODY_TEXT_COLOR, fontSize: 14.0)),
         ),
       ],
     );
