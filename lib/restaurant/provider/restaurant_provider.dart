@@ -1,10 +1,9 @@
 import 'package:acture/common/model/cursor_pagination_model.dart';
-import 'package:acture/common/model/pagination_params.dart';
 import 'package:acture/common/provider/pagination_provider.dart';
 import 'package:acture/restaurant/model/restaurant_model.dart';
-import 'package:acture/restaurant/repository/restaurant_rating_repository.dart';
 import 'package:acture/restaurant/repository/restaurant_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:collection/collection.dart';
 
 final restaurantDetailProvider =
     Provider.family<RestaurantModel?, String>((ref, id) {
@@ -14,7 +13,8 @@ final restaurantDetailProvider =
     return null;
   }
   //기존 리스트에서 데이터 가져옴
-  return state.data.firstWhere((element) => element.id == id);
+  // NOTE: collection 패키지 추가 기존 firstWhere는 에러가 발생하자미나 이건 없으면 null
+  return state.data.firstWhereOrNull((element) => element.id == id);
 });
 
 final restaurantProvider =
@@ -53,12 +53,20 @@ class RestaurantStateNotifier
       return;
     }
 
-    final pState = state as CursorPagination;
-
     final resp = await repository.getRestaurantDetail(id: id);
-    state = pState.copyWith(
-        data: pState.data
-            .map<RestaurantModel>((e) => e.id == id ? resp : e)
-            .toList());
+    final pState = state as CursorPagination;
+    // NOTE: 음식탭에서 음식 클릭 시 레스토랑 정보가 없을 수도 있음 그럴 경우 그냥 뒤에 추가해버림
+    // 여기서 pState는 레스토랑 리스트임
+    // 이 경우 restaurant_detail에 37line 이 실행됨
+    if (pState.data.where((e) => e.id == id).isEmpty) {
+      state = pState.copyWith(data: [...pState.data, resp]);
+    } else {
+      state = pState.copyWith(
+          data: pState.data
+              .map<RestaurantModel>(
+                (e) => e.id == id ? resp : e,
+              )
+              .toList());
+    }
   }
 }
